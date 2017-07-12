@@ -1,0 +1,19 @@
+
+
+after generating new project
+
+  - in Gemfile - uncomment bcrypt gem
+
+$ bundle install
+$ bundle show bcrypt (to verify install)
+
+  *- when creating your password, use the 'digest' for data type:
+
+$ rails g model User name:string password:digest
+
+
+  - create form, include a password confirmation line;
+
+in html:
+
+  <input type="password" name="password_confirmation">

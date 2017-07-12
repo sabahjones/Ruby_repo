@@ -1,0 +1,19 @@
+Ruby Models setup
+
+  - cd into project folder
+  - create model in command line using this structure;
+
+  'rails generate model {{Model_name}} {{field}}:{{data type}} {{field}}:{{data type}} {{field}}:{{data type}}'
+
+example:
+
+$ rails generate model User first_name:string last_name:string age:integer occupation:string
+
+  - this will setup the models, to create them:
+
+$ rake db:migrate
+
+  - repeat this step to add more models.
+  - to link models, create foreign key and use "references" as the input value
+
+$ rails generate model Post text:text author:string user:references

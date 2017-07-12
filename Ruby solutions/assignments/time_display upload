@@ -1,0 +1,15 @@
+Controller:
+
+  class TimesController < ApplicationController
+    def time
+      @time = (Time.now - 6.hours).to_formatted_s(:long)
+      #render :text => 'the time is @time'
+    end
+  end
+
+
+time.html.erb
+
+<h1>times index</h1>
+
+<p>the current date and time is <%= @time %></p>

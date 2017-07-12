@@ -1,0 +1,23 @@
+Scaffolding
+
+  - create new project
+
+$ rails new demo_scaffolding
+
+  - cd into demo_scaffolding folder
+
+$ bundle install
+
+  * use 'scaffold' command for new model
+  * this command created the model, controller, 4 views files, and RESTful routing for CRUD
+
+$ rails g scaffold User first_name:string last_name:string email:string age:integer
+
+
+$ rake db:migrate
+
+  - migrate db models
+  - run server
+
+$ rails s -b 0.0.0.0  (if running vagrant)
+$rails s              (local)

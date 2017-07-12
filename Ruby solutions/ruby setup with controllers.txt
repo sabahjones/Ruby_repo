@@ -1,0 +1,176 @@
+
+Defining Routes, invoking Controllers:
+
+
+Basic setup:
+
+    - make new project in ruby folder:
+
+$ rails new {{demo}}
+
+    - cd into {{demo}} folder
+
+$ atom .
+
+    - to get access to folder/files
+    - add gems to Gemfile:
+
+        gem 'hirb'
+        gem 'rails-footnotes', '~> 4.1', '>= 4.1.8'
+
+    - go back to prompt to install new footnotes with bundle install
+
+$ bundle install
+$ rails generate rails_footnotes:install
+
+    - (this is just for footnotes installation)
+
+
+
+*#*#*# continue to make a custom app, or skip to scaffolding for quick setup.
+
+
+
+I. (optional) - Setup all default routes
+
+  - note: controller names are always plural.
+
+  - to have rails create controller routes: (optional step: will create all 7 routes by default, but you can define routes post controller instead.)
+    - goto app/config/routes.rb
+    - add line: "resources :{controllername}"
+    - goto project folder
+
+$ rake routes
+
+  - rake routes will generate the 8 default restful routes, but if you need to define a custom route:
+    - in routes.rb;
+
+    get "profile" => "users#show"  # == get route: "/profile"; "user" controller, "show" method/function
+
+
+
+II. Create Controllers
+
+  - navigate to project folder;
+  - create new controller and associated routes.
+  - there are 7 default routes you might want to use: index, new, create, show, edit, update & destroy
+
+
+$ rails g controller { controller_name } {route_method} {route_method} ...
+
+example:
+
+$ rails g controller products index new
+
+
+III. Configure server
+
+  - run server now (open 2nd terminal for console)
+
+  - use below for vagrant window:
+
+$ rails s -b 0.0.0.0
+
+or $ rails s  (if you are running ruby locally)
+
+  - basic connectivity between routes and controllers is setup
+  - for modification:
+
+      controllers -> app/controllers/controller.rb
+      routes      -> config/routes.rb
+      html views  -> app/views/{{controller_name}}/ --> {{method_name}}.html.erb files here
+
+  - to view the web pages:
+
+  - localhost:3000//{{controller_name}}/{{method_name}}
+      eg: "localhost:3000/users/index"
+
+
+IV. Creating a basic form
+
+  - create the Model if it doesn't exist already. ex:
+
+$ rails generate model Product name:string description:text
+
+  - create the form:
+
+      HTML form:
+
+        <form action="/products" method='POST'>     # route = POST: '/products'
+
+          <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+          name: <input type="text" name="name">
+          description: <input type="text" name="description">
+          <input type="submit" value="submit"></td></tr>
+        </form>
+
+      *rails post forms require the "authenticity_token" (until you learn to use form helpers to authenticate)
+
+  - create the routing parameter in "config/routes.rb" to correctly route post data:
+
+      routes.rb:
+
+        post '/products' => 'products#create'  ## {route method} {'url'} => {'controller#method'}
+
+  - configure "product" controller with a method named "create" to handle data:
+
+        def create
+          render :text => "test message"
+        end
+
+  - if the above works, everything is setup correctly, update create method with sql add statement:
+
+        def create
+          @product = Product.create( name: params[:name], description: params[:description])
+        end
+
+  - lastly, add the redirect statement to send the user to the appropriate page. (or same page, either way.)
+
+        def create
+          @product = Product.create( name: params[:name], description: params[:description])
+          redirect_to '/products/index'
+        end
+
+  - debugging (optional)
+
+        def create
+          @product = Product.create( name: params[:name], description: params[:description])
+
+          puts "\n\n\n\n", @product.inspect, "\n\n\n\n"  #this shows up in the console, not the web page.
+          # comment this out -  redirect_to '/products/index'
+
+        end
+
+
+  -resetting sessions:
+
+      reset_session (in controller)
+
+
+
+
+
+
+
+
+
+
+  -
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.

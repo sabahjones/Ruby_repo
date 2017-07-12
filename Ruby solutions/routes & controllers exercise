@@ -1,0 +1,46 @@
+Routes:
+
+get 'hello' => 'products#hello'
+get 'say/hello' => 'products#hello2'
+get 'say/hello/joe' => 'products#joe'
+get 'say/hello/michael' => 'products#michael'
+get '/' => 'products#say'
+get 'times' => 'products#times'
+get 'times/restart' => 'products#restart'
+
+Controllers:
+
+def times
+    if !(session[:counter])
+      session[:counter] = 1
+    elsif (session[:counter])
+      session[:counter] += 1
+    end
+    render :text => "You have visited this page #{session[:counter]} times!"
+end
+
+def restart
+  session[:counter] = nil
+  render :text => "Destroyed the session!"
+end
+
+def hello
+  render :text => "hello Coding Dojo!"
+end
+
+def hello2
+  render :text => "Saying Hello!!!!"
+end
+
+def joe
+  render :text => "Hello Joe!"
+end
+
+def michael
+  #render :text => "Hello Michael!"
+  redirect_to "/say/hello/joe"
+end
+
+def say
+  render :text => "What do you want me to say"
+end

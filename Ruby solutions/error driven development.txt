@@ -1,0 +1,325 @@
+
+using "anime" as example:
+
+
+  - create project
+
+$ rails new anime_project
+
+  - route '/animes' fails
+  - goto config/routes.rb
+
+
+I. Setup routes, controllers, views, and db.
+
+
+routes.rb:
+
+line:  get 'animes' => 'animes#index'
+
+
+  - create controller file in app/controllers folder;
+
+$ touch animes_controller.rb
+
+  - open file, add 3 lines:
+
+
+animes_controller.rb:
+
+
+line:  class AnimesController < ApplicationController          ###Animescontroller inherits functions of ApplicationController
+line:
+line:  end
+
+
+  - add controller method index: (inside above class AnimeController)
+
+
+line: def index
+line:
+line: end
+
+
+  - add view (html.erb file) for index method to direct to:
+  - goto app/views --> add directory 'animes'
+  - add file index.html.erb
+
+$ cd app/views
+$ mkdir animes
+$ touch index.html.erb
+
+  add text to html.erb file.
+
+
+  - create database functions
+  - app/controllers/animes_controller.rb
+  - add sql database query to index method
+
+line:  def index
+line:    @animes = Anime.all
+line:  end
+
+  - add values to database
+  - create model:
+
+$ rails g model Anime name:string
+$ rake db:migrate
+
+  - create records:
+
+$ create Anime(name: "Naruto")
+$ create Anime(name: "Deathnote")
+
+  - create data loop in index.html.erb
+
+line: <% @animes.each do |anime| %>
+line: <%= anime.name %>
+line: <% end %>
+
+
+
+II. Add 'new' route
+
+  - add route to view
+
+  in index.html.erb:
+
+line: <a href='animes/new'>Create new Anime</a>
+
+  - config new route: config/routes.rb
+
+  in routes.rb:
+
+line: get 'anime/new' => 'animes#new'
+
+  - create new method in controller: app/controllers/anime_controller.rb
+
+  in animes_controller.rb
+
+line:   def new
+line:
+line:   end
+
+  - no template exists. (default 'new.html.erb' file)
+
+  - goto app/views
+  - create new template
+
+$ touch new.html.erb
+
+  - add form to file
+
+line:   <form action='/animes' method='post'>
+line:     <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"
+line:     Name: <input type='text' name='name'>
+line:     <input type='submit' value='create anime'>
+line:   </form>
+
+Done
+
+
+III. create Create method
+
+  - create post route for 'new.html.erb' form
+  - config/routes.rb
+
+  in routes.rb:
+
+line: post '/create' => 'animes#create'
+
+  - create method in controller to receive and process data
+  - 'app/controllers/animes_controller.rb'
+
+line:   def create
+line:   Anime.create(name: params[:name])
+line:   redirect_to '/animes'
+line:   end
+
+
+IV. create Show route/method
+
+  - html link, route, controller, db
+
+  - link individual items using db id.
+
+
+index.html.erb:
+
+line: <p><a href='/animes/<%= anime.id%>'</a></p>
+
+
+  - setup route in config:
+
+
+in config/routes.rb:
+
+line: get '/anime/:id' => 'animes#show'
+
+
+  - setup controller to process route
+
+app/controllers/anime_controller.rb
+
+anime_controller.rb:
+
+line:   def show
+line:   fail          #using ruby footnotes, fail will allow you to examine the route to make sure you're getting the right params;
+line:   end
+
+
+  - create html template
+  - app/views/animes
+
+$touch show.html.erb
+
+  - in file:
+  - test route (with fail above, look at params;)
+  - rewrite the show function/method
+  - app/controllers/animes_controller
+
+animes_controller.rb:
+
+line: def show
+line: @anime = Anime.find(params[:id])
+line: end
+
+  - update view
+
+show.index.erb:
+
+line: <%= @anime.name %>
+
+Done
+
+
+V. Edit route
+
+  - update link, route, controller, db, html
+
+  - using show page for edit link; add link.
+
+show.html.erb
+
+line: <a href="animes/<%= anime.id %>/edit">Edit anime</a>
+
+  - configure route;
+
+
+config/routes.rb
+
+line: get 'animes/:id/edit' => 'animes#edit'
+
+
+  - create edit function
+  - app/controllers/animes_controller.rb
+
+
+animes_controller.rb
+
+line:   def edit
+line:     @anime = Anime.find(params[:id])
+line:   end
+
+
+  - create html template, need a form for update
+  - !!! re-using the show route, but adding 'patch' value to a hidden input to distinguish between them.
+
+line:   <form action='animes/<%= anime.id %>' method='post'>
+line:     <input type='hidden' name='_method' value='patch'>      ###!!! patch here
+line:     <input type='hidden' name='authenticity_token' value="<%= form_authenticity_token %>"
+line:     Edit name: <input type='text' name='name' value='<%= anime.name%>'
+line:     <input type='submit' value='update'>
+line:   </form>
+
+
+  - create route for new post method
+  - config/routes.rb
+
+
+VI. Update part II
+
+routes.rb
+
+line: patch 'update/:id' => 'animes#update'
+
+
+  - update controller to process route
+  - app/controllers/anime_controller.rb
+
+anime_controller.rb
+
+line:   def update
+line:     Anime.find(params[:id]).update(name: params[:id])
+line:     redirect_to '/animes'
+line:   end
+
+OR
+
+line:   def update
+line:     anime = Anime.find(params[:id])
+line:     anime.name = params[:name]
+line:     anime.save
+line:     redirect_to '/animes'
+line:   end
+
+
+VI. last route.. Destroy
+
+  - create link, config route, update controller, query DB.
+  - create a FORM, not a tag for delete in show.html.erb
+  - reusing route pathway from update & show, add value delete to form.
+
+show.html.erb:
+
+line:   <form action='/animes/<%= anime.id %>' method='POST'>
+line:     <input type='hidden' name='_method' value='delete'>
+line:     <input type='hidden' name='authenticity_token' value="<%=form_authenticity_token%>">
+line:     <input type='submit' value='delete anime'>
+line:   </form>
+
+
+  - configure delete route
+  - in config/routes.rb
+
+line: delete 'animes/:id' => 'animes#destroy'
+
+  - create method in controller
+
+line:   def destroy
+line:     Anime.find(params[:id]).destroy
+line:     redirect_to '/animes'
+line:   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.

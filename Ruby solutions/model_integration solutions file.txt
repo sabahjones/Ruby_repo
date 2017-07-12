@@ -1,0 +1,96 @@
+Rails.application.routes.draw do
+
+  get 'users/new'
+  get 'users' => 'users#index'
+  get 'users/show/:id' => 'users#show'
+  get 'users/delete/:id' => 'users#delete'
+  get 'users/:id/edit' => 'users#edit'
+  get 'users/count' => 'users#count'
+
+  post '/adduser' => 'users#create'
+  post '/update/:id' => 'users#update'
+
+
+class UsersController < ApplicationController
+
+    def index
+      #render json: User.all
+      @users = User.all
+    end
+    def create
+      User.create(first_name: params[:first_name], last_name: params[:last_name], age: params[:age], occupation: params[:occupation])
+      redirect_to "/users"
+    end
+    def update
+      #render :text => "hit update route"
+      User.find(params[:id]).update(first_name: params[:first_name], last_name: params[:last_name], age: params[:age], occupation: params[:occupation])
+      redirect_to "/users"
+    end
+
+    def show
+      #@oneuser = User.find(params[:id])
+      render json: User.find(params[:id])
+    end
+    def edit
+      @edituser = User.find(params[:id])
+    end
+    def delete
+      User.find(params[:id]).destroy()
+      redirect_to "/users"
+    end
+    def new
+    end
+    def count
+      @count = User.all.count()
+      render :text => "#{@count}"
+    end
+
+  end
+
+
+<h1>edit user</h1>
+
+<table>
+
+<br><br>
+<form action="/update/<%= @edituser.id %>" data-no-turbolink="true" method="post">
+  <input name="authenticity_token" value="<%= form_authenticity_token %>" type="hidden">
+  first name: <input type="text" name="first_name" value="<%= @edituser.first_name %>"><br>
+  last name: <input type="text" name="last_name" value="<%= @edituser.last_name %>"><br>
+  age: <input type="text" name="age" value="<%= @edituser.age %>"><br>
+  occupation: <input type="text" name="occupation" value="<%= @edituser.occupation %>"><br>
+  <input type="submit" value="update user">
+</form>
+</table>
+
+index page:
+
+<h1>Users Index</h1>
+
+
+<table>
+  <tr>
+    <th>ID</th><th>First Name</th><th>Created at</th><th>Updated at</th><th>actions</th>
+  </tr>
+<% for user in @users do %>
+<tr>
+  <td><%= user.id %></td>
+  <td><%= user.first_name %></td>
+  <td><%= user.created_at.to_formatted_s(:short)%></td>
+  <td><%= user.updated_at.to_formatted_s(:long)%></td>
+  <td>
+    <a href="users/show/<%= user.id %>">show</a>
+    <a href="users/delete/<%= user.id %>">delete</a>
+    <a href="users/<%= user.id %>/edit">edit</a>
+  </td>
+</tr>
+<% end %>
+</table>
+<br>
+<a href="users/count"><button>see total # of users in database!</button></a>
+<br><br>
+<a href="/users/new"><button>Add new user!</button></a>
+<br><br><br>
+<p>link to other pages: </p>
+<a href="/users/edit">edit page</a><br>
+<a href="/users/show">show one user page</a><br>

@@ -1,0 +1,43 @@
+
+Rspec methods:
+
+1. Describe - wraps test environment - Similiar in scope to a Function
+
+2. Context - also similar to function but sections out different areas of code. Like a Method.
+
+3. It - used as a header to "describe" specific tests. Scope is simlar to an IF statement.
+
+4. Expect - states the expected result. Like a condition in regular code.
+
+5. Before - runs before the code (inside Describe). Like assigning variables before the function/method runs.
+
+
+Running a test:
+  - write up the test code (an example below). place the code and test code in the same folder.
+    - "project_spec.rb" = test file
+    - "project.rb" = code file        ## not sure if this can be changed.
+
+Example:
+
+RSpec.describe "Buy a soda" do
+    before(:each) do
+        @buyer = Buyer.new
+    end
+
+    context "has money" do
+        before(:each) do
+            @buyer.money = 10
+        end
+        it "can buy a soda" do
+            expect(@buyer.buy_soda).to eq(true)
+        end
+    end
+    context "doesn't have money" do
+        before(:each) do
+            @buyer.money = 0
+        end
+        it "can't buy a soda" do
+            expect(@buyer.buy_soda).to eq(false)
+        end
+    end
+end
